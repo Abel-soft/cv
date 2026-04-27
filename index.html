@@ -3,77 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV interactif - RAHAJASON Feno Arthur</title>
+    <title>CV Builder - Export PDF direct</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        /* ========== STYLES ÉCRAN (inchangés) ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        .app-container {
+        body {
+            background: #eef2f5;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 1.5rem;
+        }
+        .builder-container {
             display: flex;
             flex-wrap: wrap;
             gap: 2rem;
-            padding: 2rem 1rem;
-            background: #f0f2f5;
-            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .form-sidebar {
+        /* Formulaire */
+        .form-panel {
             flex: 1.2;
-            min-width: 300px;
+            min-width: 320px;
             background: white;
-            border-radius: 28px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            padding: 1.8rem;
             height: fit-content;
-            max-height: 90vh;
+            max-height: calc(100vh - 3rem);
             overflow-y: auto;
         }
-        .cv-preview { flex: 2.5; min-width: 400px; }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 0.3rem; font-size: 0.9rem; }
-        input, textarea, select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 0.9rem;
+        .form-panel h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #1e4a76;
+            border-left: 5px solid #1e7e83;
+            padding-left: 1rem;
         }
-        button {
-            background: #1e7e83;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
+        .form-section {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
         }
-        button:hover { background: #0f5c60; }
-        .section-form {
-            border-top: 2px solid #e2e8f0;
-            margin-top: 1rem;
-            padding-top: 1rem;
-        }
-        .item-card {
+        .section-header {
             background: #f8fafc;
-            padding: 0.5rem;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0f3b5c;
         }
-        .item-card button {
-            background: #dc2626;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.7rem;
+        .section-header:hover { background: #eef2ff; }
+        .toggle-icon { transition: transform 0.2s; }
+        .section-header.open .toggle-icon { transform: rotate(180deg); }
+        .section-content {
+            padding: 1.2rem;
+            display: none;
+            border-top: 1px solid #e2e8f0;
+            background: white;
         }
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 12pt;
-            background: #f4f7fc;
-            margin: 0;
+        .section-content.open { display: block; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: #1e293b;
         }
+        .form-group label i { color: #1e7e83; width: 1.2rem; }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: #fff;
+        }
+        input:focus, textarea:focus { border-color: #1e7e83; outline: none; box-shadow: 0 0 0 3px rgba(30,126,131,0.1); }
+        .dynamic-list { margin-top: 0.5rem; }
+        .item-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+        .item-card .item-info { flex: 1; font-size: 0.85rem; }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-icon:hover { background: #fee2e2; }
+        .btn-add {
+            background: #e2e8f0;
+            color: #1e7e83;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-primary {
+            background: #1e7e83;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+        .btn-reset {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            margin-left: 0.5rem;
+        }
+        /* Aperçu CV */
+        .preview-panel {
+            flex: 2.5;
+            min-width: 400px;
+            background: #f8fafc;
+            border-radius: 32px;
+            padding: 1rem;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+        .theme-toggle, .pdf-btn-header {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+        /* STYLES CV (Times New Roman) */
         .cv-container {
             max-width: 1100px;
             margin: 0 auto;
@@ -81,49 +182,17 @@
             border-radius: 28px;
             box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
             overflow: hidden;
+            font-family: 'Times New Roman', Times, serif;
         }
-        .header {
-            background: linear-gradient(135deg, #1e4a76, #0a2f44);
-            padding: 2rem 2rem 1.8rem;
-            color: white;
-        }
-        .header-flex {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        .header { background: linear-gradient(135deg, #1e4a76, #0a2f44); padding: 2rem 2rem 1.8rem; color: white; }
+        .header-flex { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
         .name-title h1 { font-size: 22pt; font-weight: bold; margin-bottom: 0.25rem; }
         .name-title p { font-size: 14pt; }
-        .contact-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            margin-top: 1.2rem;
-            font-size: 11pt;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 1.2rem;
-        }
+        .contact-bar { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1.2rem; font-size: 11pt; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1.2rem; }
         .contact-bar a, .contact-bar span { color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .header-buttons { display: flex; gap: 0.8rem; }
-        .theme-toggle, .pdf-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .pdf-btn { border-radius: 30px; width: auto; padding: 0 1rem; gap: 8px; font-size: 11pt; }
         .cv-main { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
         .sidebar { background: #f8fafc; padding: 2rem 1.8rem; border-right: 1px solid #e2e8f0; }
-        .photo-container { text-align: center; margin-bottom: 1.8rem; }
+        .photo-container { text-align: center; margin-bottom: 1.8rem; position: relative; }
         .photo-container img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .import-photo-btn { background: #1e7e83; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; margin-top: 8px; }
         .photo-hint { font-size: 10pt; margin-top: 5px; opacity: 0.7; }
@@ -141,128 +210,79 @@
         .timeline-desc li::before { content: "▹"; position: absolute; left: 0; color: #1e7e83; }
         .training-item { margin-bottom: 0.6rem; font-size: 12pt; }
         .footer-note { text-align: center; font-size: 10pt; padding: 1rem; background: #f1f5f9; color: #475569; }
-        @media (max-width: 780px) {
-            .app-container { flex-direction: column; }
-            .cv-main { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 780px) { .builder-container { flex-direction: column; } .cv-main { grid-template-columns: 1fr; } }
 
-        /* ========== STYLES POUR L'EXPORT PDF (agrandissement temporaire) ========== */
-        .pdf-render, .pdf-render body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
-        }
-        .pdf-render .cv-container {
-            max-width: none !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-        }
-        /* Ajustez ces valeurs pour la taille de police finale (14pt donne environ 10-11pt sur papier) */
-        .pdf-render, .pdf-render * {
-            font-size: 14pt !important;
-            line-height: 1.4 !important;
-        }
-        .pdf-render .name-title h1 { font-size: 22pt !important; }
-        .pdf-render .section h3 { font-size: 16pt !important; }
-        .pdf-render .timeline-title, .pdf-render .timeline-date,
-        .pdf-render .timeline-sub, .pdf-render .timeline-desc,
-        .pdf-render .training-item {
-            font-size: 14pt !important;
-        }
-        .pdf-render .header-buttons, .pdf-render .import-photo-btn,
-        .pdf-render .photo-hint, .pdf-render .footer-note {
-            display: none !important;
-        }
+        /* Thème sombre (écran) */
+        body.dark { background: #121826; }
+        body.dark .form-panel, body.dark .preview-panel { background: #1e2936; color: #e0e4e8; }
+        body.dark .section-header { background: #0f172a; color: #7bc5d1; }
+        body.dark .section-content { background: #1e2936; border-color: #2d3a48; }
+        body.dark input, body.dark textarea { background: #0f172a; border-color: #475569; color: white; }
+        body.dark .item-card { background: #0f172a; border-color: #2d3a48; color: #cbd5e1; }
+        body.dark .btn-add { background: #334155; color: #7bc5d1; }
+        body.dark .cv-container { background: #1e2936; }
+        body.dark .sidebar { background: #0f172a; border-right-color: #2d3a48; }
+        body.dark .qualities span { background: #2d3748; color: #e0e4e8; }
+        body.dark .footer-note { background: #0f172a; color: #94a3b8; }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <div class="form-sidebar">
-        <h2><i class="fas fa-edit"></i> Modifier le CV</h2>
+<div class="builder-container">
+    <div class="form-panel">
+        <h2><i class="fas fa-pen-ruler"></i> Éditeur CV Pro</h2>
         <form id="cvForm">
-            <div class="form-group">
-                <label>Nom complet</label>
-                <input type="text" id="fullName" value="RAHAJASON Feno Arthur">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-id-card"></i> Identité & Contact</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content">
+                    <div class="form-group"><label><i class="fas fa-user"></i> Nom complet</label><input type="text" id="fullName" value="RAHAJASON Feno Arthur"></div>
+                    <div class="form-group"><label><i class="fas fa-briefcase"></i> Titre</label><input type="text" id="title" value="Enseignant Chercheur – Université de Mahajanga"></div>
+                    <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Adresse</label><input type="text" id="address" value="UFRSS site MANDRITSARA – IM: 493 992"></div>
+                    <div class="form-group"><label><i class="fas fa-phone-alt"></i> Tél. 1</label><input type="text" id="phone1" value="032 53 581 16"></div>
+                    <div class="form-group"><label><i class="fas fa-mobile-alt"></i> Tél. 2</label><input type="text" id="phone2" value="032 46 854 56"></div>
+                    <div class="form-group"><label><i class="fas fa-envelope"></i> Email</label><input type="email" id="email" value="fenoarthur24@gmail.com"></div>
+                    <div class="form-group"><label><i class="fas fa-globe"></i> Nationalité</label><input type="text" id="nationality" value="Malgache"></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Titre</label>
-                <input type="text" id="title" value="Enseignant Chercheur – Université de Mahajanga">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-user-graduate"></i> Profil</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><textarea id="profile" rows="3">Docteur en Sciences de la Vie et de l’Environnement, enseignant chercheur expérimenté. Expertise en gestion des déchets, assainissement, développement durable et gouvernance associative. Dynamique, organisé et engagé pour la recherche et la formation.</textarea></div>
             </div>
-            <div class="form-group">
-                <label>Adresse</label>
-                <input type="text" id="address" value="UFRSS site MANDRITSARA – IM: 493 992">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-language"></i> Langues & Dialectes</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content">
+                    <div class="form-group"><label>Langues (virgules)</label><textarea id="languages" rows="2">Malgache – langue maternelle, Français – parlé et écrit courant, Anglais – notions</textarea></div>
+                    <div class="form-group"><label>Dialectes</label><input type="text" id="dialects" value="Betsimisaraka, Tsimihety, Merina, Sakalava"></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Téléphone 1</label>
-                <input type="text" id="phone1" value="032 53 581 16">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-laptop-code"></i> Compétences info</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><textarea id="skills" rows="2">Word, Excel, PowerPoint, Internet, outils de télé-enseignement, Gestion de projets associatifs</textarea></div>
             </div>
-            <div class="form-group">
-                <label>Téléphone 2</label>
-                <input type="text" id="phone2" value="032 46 854 56">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-heart"></i> Qualités</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><input type="text" id="qualities" value="Ordonné, Sérieux, Dynamique, Ponctuel, Esprit d'équipe"></div>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="email" value="fenoarthur24@gmail.com">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-car"></i> Permis</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><input type="text" id="permis" value="Catégories A, B, D – véhicule"></div>
             </div>
-            <div class="form-group">
-                <label>Nationalité</label>
-                <input type="text" id="nationality" value="Malgache">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-briefcase"></i> Expériences</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><div id="experiences-list" class="dynamic-list"></div><button type="button" id="addExperienceBtn" class="btn-add"><i class="fas fa-plus"></i> Ajouter</button></div>
             </div>
-            <div class="form-group">
-                <label>Profil (texte court)</label>
-                <textarea id="profile" rows="3">Docteur en Sciences de la Vie et de l’Environnement, enseignant chercheur expérimenté. Expertise en gestion des déchets, assainissement, développement durable et gouvernance associative. Dynamique, organisé et engagé pour la recherche et la formation.</textarea>
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-graduation-cap"></i> Formations académiques</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><div id="educations-list" class="dynamic-list"></div><button type="button" id="addEducationBtn" class="btn-add"><i class="fas fa-plus"></i> Ajouter</button></div>
             </div>
-            <div class="section-form">
-                <label>Langues (séparées par des virgules)</label>
-                <textarea id="languages" rows="2">Malgache – langue maternelle, Français – parlé et écrit courant, Anglais – notions</textarea>
-                <label>Dialectes</label>
-                <input type="text" id="dialects" value="Betsimisaraka, Tsimihety, Merina, Sakalava">
+            <div class="form-section"><div class="section-header"><span><i class="fas fa-chalkboard-user"></i> Formations complémentaires</span><i class="fas fa-chevron-down toggle-icon"></i></div>
+                <div class="section-content"><div id="trainings-list" class="dynamic-list"></div><button type="button" id="addTrainingBtn" class="btn-add"><i class="fas fa-plus"></i> Ajouter</button></div>
             </div>
-            <div class="section-form">
-                <label>Compétences informatiques (séparées par des virgules)</label>
-                <textarea id="skills" rows="2">Word, Excel, PowerPoint, Internet, outils de télé-enseignement, Gestion de projets associatifs</textarea>
-            </div>
-            <div class="section-form">
-                <label>Qualités (séparées par des virgules)</label>
-                <input type="text" id="qualities" value="Ordonné, Sérieux, Dynamique, Ponctuel, Esprit d'équipe">
-            </div>
-            <div class="section-form">
-                <label>Permis</label>
-                <input type="text" id="permis" value="Catégories A, B, D – véhicule">
-            </div>
-            <div class="section-form">
-                <label>Expériences professionnelles</label>
-                <div id="experiences-list"></div>
-                <button type="button" id="addExperienceBtn"><i class="fas fa-plus"></i> Ajouter une expérience</button>
-            </div>
-            <div class="section-form">
-                <label>Formations académiques</label>
-                <div id="educations-list"></div>
-                <button type="button" id="addEducationBtn"><i class="fas fa-plus"></i> Ajouter une formation</button>
-            </div>
-            <div class="section-form">
-                <label>Formations complémentaires</label>
-                <div id="trainings-list"></div>
-                <button type="button" id="addTrainingBtn"><i class="fas fa-plus"></i> Ajouter une formation</button>
-            </div>
-            <button type="button" id="resetBtn">Réinitialiser</button>
+            <div><button type="button" id="resetBtn" class="btn-primary btn-reset"><i class="fas fa-undo-alt"></i> Réinitialiser</button></div>
         </form>
     </div>
-    <div class="cv-preview">
-        <div class="cv-container" id="cvContainer"></div>
-        <div style="margin-top: 1rem; text-align: center;">
-            <button class="pdf-btn" id="exportPDF" style="background:#1e7e83; color:white; border:none; padding:0.5rem 1.5rem;"><i class="fas fa-file-pdf"></i> Télécharger PDF</button>
-            <button class="theme-toggle" id="themeToggle" style="background:#1e7e83; margin-left:1rem;"><i class="fas fa-moon"></i></button>
+    <div class="preview-panel">
+        <div class="preview-header">
+            <h3><i class="fas fa-eye"></i> Aperçu (Times New Roman)</h3>
+            <div><button id="themeToggleBtn" class="theme-toggle"><i class="fas fa-moon"></i> Thème</button><button id="exportPDFBtn" class="pdf-btn-header"><i class="fas fa-file-pdf"></i> Télécharger PDF</button></div>
         </div>
+        <div id="cvContainer"></div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script>
-    // ======================== DONNÉES PAR DÉFAUT ========================
+    // Données par défaut
     let experiences = [
         { title: "Enseignant Chercheur", date: "depuis 2023", institution: "Ministère de l’Enseignement Supérieur et de la Recherche Scientifique", details: [] },
         { title: "Enseignant vacataire", date: "depuis 2017", institution: "UFRSS site Mandritsara – Université de Mahajanga", details: [] },
@@ -290,21 +310,10 @@
     ];
     let profilePhotoSrc = "https://via.placeholder.com/140?text=Photo";
     const cvContainer = document.getElementById('cvContainer');
-    const themeToggle = document.getElementById('themeToggle');
     let currentTheme = localStorage.getItem('theme') || 'light';
 
-    // ======================== FONCTIONS UTILITAIRES ========================
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
 
-    // ======================== GÉNÉRATION DU CV ========================
     function renderCV() {
         const fullName = document.getElementById('fullName').value;
         const title = document.getElementById('title').value;
@@ -319,21 +328,14 @@
         const skillsRaw = document.getElementById('skills').value;
         const qualitiesRaw = document.getElementById('qualities').value;
         const permis = document.getElementById('permis').value;
-
         const languagesArray = languagesRaw.split(',').map(l => l.trim());
         const skillsArray = skillsRaw.split(',').map(s => s.trim());
         const qualitiesArray = qualitiesRaw.split(',').map(q => q.trim());
 
         let html = `
-            <div class="cv-container" style="background: white;">
+            <div class="cv-container">
                 <div class="header">
-                    <div class="header-flex">
-                        <div class="name-title">
-                            <h1>${escapeHtml(fullName)}</h1>
-                            <p>${escapeHtml(title)}</p>
-                        </div>
-                        <div class="header-buttons" style="display: none;"></div>
-                    </div>
+                    <div class="header-flex"><div class="name-title"><h1>${escapeHtml(fullName)}</h1><p>${escapeHtml(title)}</p></div><div class="header-buttons" style="display:none;"></div></div>
                     <div class="contact-bar">
                         <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(address)}</span>
                         <a href="tel:${phone1.replace(/\s/g,'')}"><i class="fas fa-phone-alt"></i> ${escapeHtml(phone1)}</a>
@@ -346,65 +348,25 @@
                     <div class="sidebar">
                         <div class="photo-container">
                             <img src="${profilePhotoSrc}" alt="Photo" id="profilePhotoPreview" style="width:140px;height:140px;border-radius:50%;object-fit:cover;">
-                            <div>
-                                <button class="import-photo-btn" id="importPhotoBtnForm"><i class="fas fa-plus"></i></button>
-                                <input type="file" id="photoUploadForm" accept="image/*" style="display:none;">
-                            </div>
-                            <p class="photo-hint">Cliquez sur + pour ajouter votre photo</p>
+                            <div><button class="import-photo-btn" id="importPhotoBtnForm"><i class="fas fa-plus"></i></button><input type="file" id="photoUploadForm" accept="image/*" style="display:none;"></div>
+                            <p class="photo-hint">Cliquez sur + pour ajouter une photo</p>
                         </div>
-                        <div class="section">
-                            <h3><i class="fas fa-user-graduate"></i> Profil</h3>
-                            <p>${escapeHtml(profile)}</p>
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-language"></i> Langues</h3>
-                            ${languagesArray.map(lang => `<div class="lang-item">${escapeHtml(lang)}</div>`).join('')}
-                            <div class="dialects"><strong>Dialectes :</strong> ${escapeHtml(dialects)}</div>
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-laptop-code"></i> Compétences info</h3>
-                            ${skillsArray.map(skill => `<div class="skill-item">${escapeHtml(skill)}</div>`).join('')}
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-heart"></i> Qualités</h3>
-                            <div class="qualities">${qualitiesArray.map(q => `<span>${escapeHtml(q)}</span>`).join('')}</div>
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-car"></i> Permis</h3>
-                            <p>${escapeHtml(permis)}</p>
-                        </div>
+                        <div class="section"><h3><i class="fas fa-user-graduate"></i> Profil</h3><p>${escapeHtml(profile)}</p></div>
+                        <div class="section"><h3><i class="fas fa-language"></i> Langues</h3>${languagesArray.map(l => `<div>${escapeHtml(l)}</div>`).join('')}<div style="margin-top:8px;"><strong>Dialectes :</strong> ${escapeHtml(dialects)}</div></div>
+                        <div class="section"><h3><i class="fas fa-laptop-code"></i> Compétences info</h3>${skillsArray.map(s => `<div>${escapeHtml(s)}</div>`).join('')}</div>
+                        <div class="section"><h3><i class="fas fa-heart"></i> Qualités</h3><div class="qualities">${qualitiesArray.map(q => `<span>${escapeHtml(q)}</span>`).join('')}</div></div>
+                        <div class="section"><h3><i class="fas fa-car"></i> Permis</h3><p>${escapeHtml(permis)}</p></div>
                     </div>
                     <div class="content">
-                        <div class="section">
-                            <h3><i class="fas fa-graduation-cap"></i> Formation académique</h3>
-                            ${educations.map(edu => `
-                                <div class="timeline-item">
-                                    <div class="timeline-title">${escapeHtml(edu.title)} <span class="timeline-date">${escapeHtml(edu.date)}</span></div>
-                                    <div class="timeline-sub">${escapeHtml(edu.institution)}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-briefcase"></i> Expériences professionnelles</h3>
-                            ${experiences.map(exp => `
-                                <div class="timeline-item">
-                                    <div class="timeline-title">${escapeHtml(exp.title)} <span class="timeline-date">${escapeHtml(exp.date)}</span></div>
-                                    <div class="timeline-sub">${escapeHtml(exp.institution)}</div>
-                                    ${exp.details && exp.details.length ? `<ul class="timeline-desc">${exp.details.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="section">
-                            <h3><i class="fas fa-chalkboard-user"></i> Formations complémentaires</h3>
-                            ${trainings.map(t => `<div class="training-item">${escapeHtml(t)}</div>`).join('')}
-                        </div>
+                        <div class="section"><h3><i class="fas fa-graduation-cap"></i> Formation académique</h3>${educations.map(edu => `<div class="timeline-item"><div class="timeline-title">${escapeHtml(edu.title)} <span class="timeline-date">${escapeHtml(edu.date)}</span></div><div class="timeline-sub">${escapeHtml(edu.institution)}</div></div>`).join('')}</div>
+                        <div class="section"><h3><i class="fas fa-briefcase"></i> Expériences professionnelles</h3>${experiences.map(exp => `<div class="timeline-item"><div class="timeline-title">${escapeHtml(exp.title)} <span class="timeline-date">${escapeHtml(exp.date)}</span></div><div class="timeline-sub">${escapeHtml(exp.institution)}</div>${exp.details && exp.details.length ? `<ul class="timeline-desc">${exp.details.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` : ''}</div>`).join('')}</div>
+                        <div class="section"><h3><i class="fas fa-chalkboard-user"></i> Formations complémentaires</h3>${trainings.map(t => `<div class="training-item">${escapeHtml(t)}</div>`).join('')}</div>
                     </div>
                 </div>
                 <div class="footer-note">Je déclare sur l’honneur l’exactitude des renseignements ci-dessus – Mis à jour le 24 mars 2026</div>
             </div>
         `;
         cvContainer.innerHTML = html;
-
         const importBtn = document.getElementById('importPhotoBtnForm');
         const photoUpload = document.getElementById('photoUploadForm');
         if (importBtn && photoUpload) {
@@ -414,9 +376,8 @@
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        const img = document.getElementById('profilePhotoPreview');
-                        if (img) img.src = ev.target.result;
                         profilePhotoSrc = ev.target.result;
+                        renderCV();
                     };
                     reader.readAsDataURL(file);
                 }
@@ -424,35 +385,26 @@
         }
     }
 
-    // ======================== GESTION DES LISTES DYNAMIQUES ========================
     function renderFormLists() {
         const expDiv = document.getElementById('experiences-list');
         expDiv.innerHTML = '';
         experiences.forEach((exp, idx) => {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            card.innerHTML = `
-                <div><strong>${escapeHtml(exp.title)}</strong> (${escapeHtml(exp.date)})<br><small>${escapeHtml(exp.institution)}</small></div>
-                <button type="button" onclick="removeExperience(${idx})">Supprimer</button>
-            `;
+            const card = document.createElement('div'); card.className = 'item-card';
+            card.innerHTML = `<div class="item-info"><strong>${escapeHtml(exp.title)}</strong> (${escapeHtml(exp.date)})<br><small>${escapeHtml(exp.institution)}</small></div><button class="btn-icon" onclick="removeExperience(${idx})"><i class="fas fa-trash-alt"></i></button>`;
             expDiv.appendChild(card);
         });
         const eduDiv = document.getElementById('educations-list');
         eduDiv.innerHTML = '';
         educations.forEach((edu, idx) => {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            card.innerHTML = `<div><strong>${escapeHtml(edu.title)}</strong> (${escapeHtml(edu.date)})<br><small>${escapeHtml(edu.institution)}</small></div>
-                <button type="button" onclick="removeEducation(${idx})">Supprimer</button>`;
+            const card = document.createElement('div'); card.className = 'item-card';
+            card.innerHTML = `<div class="item-info"><strong>${escapeHtml(edu.title)}</strong> (${escapeHtml(edu.date)})<br><small>${escapeHtml(edu.institution)}</small></div><button class="btn-icon" onclick="removeEducation(${idx})"><i class="fas fa-trash-alt"></i></button>`;
             eduDiv.appendChild(card);
         });
         const trainDiv = document.getElementById('trainings-list');
         trainDiv.innerHTML = '';
         trainings.forEach((t, idx) => {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            card.innerHTML = `<div>${escapeHtml(t)}</div>
-                <button type="button" onclick="removeTraining(${idx})">Supprimer</button>`;
+            const card = document.createElement('div'); card.className = 'item-card';
+            card.innerHTML = `<div class="item-info">${escapeHtml(t)}</div><button class="btn-icon" onclick="removeTraining(${idx})"><i class="fas fa-trash-alt"></i></button>`;
             trainDiv.appendChild(card);
         });
     }
@@ -480,105 +432,74 @@
         if(txt) trainings.push(txt);
         renderFormLists(); renderCV();
     });
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        if(confirm("Remettre toutes les données par défaut ?")) location.reload();
-    });
+    document.getElementById('resetBtn').addEventListener('click', () => { if(confirm("Réinitialiser toutes les données ?")) location.reload(); });
 
     const inputs = ['fullName','title','address','phone1','phone2','email','nationality','profile','languages','dialects','skills','qualities','permis'];
-    inputs.forEach(id => {
-        document.getElementById(id).addEventListener('input', () => renderCV());
-    });
+    inputs.forEach(id => { document.getElementById(id).addEventListener('input', () => renderCV()); });
 
-    // ======================== THÈME CLAIR/SOMBRE ========================
     function setTheme(theme) {
         if(theme === 'dark') document.body.classList.add('dark');
         else document.body.classList.remove('dark');
         localStorage.setItem('theme', theme);
-        themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        const btn = document.getElementById('themeToggleBtn');
+        if(btn) btn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i> Clair' : '<i class="fas fa-moon"></i> Sombre';
     }
-    themeToggle.addEventListener('click', () => {
-        const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-        setTheme(newTheme);
-    });
-    if (currentTheme === 'dark') setTheme('dark');
-    else setTheme('light');
+    document.getElementById('themeToggleBtn').addEventListener('click', () => { setTheme(document.body.classList.contains('dark') ? 'light' : 'dark'); });
+    setTheme(currentTheme);
 
-    // ======================== EXPORT PDF (DÉCOUPAGE PRÉCIS) ========================
-    document.getElementById('exportPDF').addEventListener('click', async function() {
-        const container = document.querySelector('#cvContainer .cv-container');
-        if (!container) return;
+    // Export PDF DIRECT avec html2pdf.js - suppression du bouton + et du texte
+    document.getElementById('exportPDFBtn').addEventListener('click', () => {
+        const originalElement = document.querySelector('#cvContainer .cv-container');
+        if (!originalElement) return;
+        const btn = document.getElementById('exportPDFBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Génération...';
         
-        // Appliquer la classe d'export pour agrandir la police
-        container.classList.add('pdf-render');
-        const exportBtn = this;
-        exportBtn.disabled = true;
-        exportBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Génération...';
-        
-        try {
-            // Attendre que les styles s'appliquent
-            await new Promise(r => setTimeout(r, 100));
-            
-            // Capturer le contenu avec html2canvas
-            const canvas = await html2canvas(container, {
-                scale: 3,               // Haute résolution
-                backgroundColor: '#ffffff',
-                logging: false,
-                useCORS: true
-            });
-            
-            const { jsPDF } = window.jspdf;
-            const pageWidth = 210;      // mm (A4)
-            const pageHeight = 297;     // mm
-            const margin = 15;          // 1.5 cm
-            
-            const imgWidth = pageWidth - margin * 2;
-            const imgHeightMM = (canvas.height * imgWidth) / canvas.width;
-            const usableHeight = pageHeight - margin * 2; // hauteur disponible par page
-            
-            const nbPages = Math.ceil(imgHeightMM / usableHeight);
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            for (let i = 0; i < nbPages; i++) {
-                if (i > 0) pdf.addPage();
-                
-                // Calcul de la tranche à extraire (en mm)
-                const startYMM = i * usableHeight;
-                const endYMM = Math.min(startYMM + usableHeight, imgHeightMM);
-                
-                // Conversion en pixels (avec arrondi pour éviter les décalages)
-                const startYPx = Math.floor((startYMM / imgHeightMM) * canvas.height);
-                const endYPx = Math.ceil((endYMM / imgHeightMM) * canvas.height);
-                const sliceHeightPx = endYPx - startYPx;
-                
-                // Créer un canvas temporaire pour cette tranche
-                const sliceCanvas = document.createElement('canvas');
-                sliceCanvas.width = canvas.width;
-                sliceCanvas.height = sliceHeightPx;
-                const ctx = sliceCanvas.getContext('2d');
-                ctx.drawImage(
-                    canvas,
-                    0, startYPx, canvas.width, sliceHeightPx,
-                    0, 0, canvas.width, sliceHeightPx
-                );
-                
-                const sliceHeightMM = (sliceCanvas.height * imgWidth) / canvas.width;
-                const imgData = sliceCanvas.toDataURL('image/png');
-                
-                pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, sliceHeightMM);
-            }
-            
-            pdf.save('CV_RAHAJASON_Feno_Arthur.pdf');
-        } catch (err) {
-            console.error(err);
-            alert("Erreur lors de l'export PDF : " + err.message);
-        } finally {
-            container.classList.remove('pdf-render');
-            exportBtn.disabled = false;
-            exportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Télécharger PDF';
+        // Cloner l'élément pour ne pas modifier l'affichage à l'écran
+        const clone = originalElement.cloneNode(true);
+        // Supprimer le bouton d'import photo et le texte d'aide
+        const photoContainer = clone.querySelector('.photo-container');
+        if (photoContainer) {
+            const plusBtn = photoContainer.querySelector('.import-photo-btn');
+            const hint = photoContainer.querySelector('.photo-hint');
+            if (plusBtn) plusBtn.remove();
+            if (hint) hint.remove();
         }
+        // Ajouter un wrapper avec un léger padding pour éviter les coupures de bord
+        const wrapper = document.createElement('div');
+        wrapper.style.padding = '0.3cm';
+        wrapper.style.backgroundColor = 'white';
+        wrapper.appendChild(clone);
+        
+        const opt = {
+            margin:        [1.2, 1.2, 1.2, 1.2], // marges en cm (haut, droite, bas, gauche)
+            filename:     'CV_RAHAJASON_Feno_Arthur.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false, letterRendering: true },
+            jsPDF:        { unit: 'cm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(wrapper).save().then(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-pdf"></i> Télécharger PDF';
+        }).catch(err => {
+            console.error(err);
+            alert("Erreur lors de l'export: " + err);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-pdf"></i> Télécharger PDF';
+        });
     });
 
-    // ======================== INITIALISATION ========================
+    document.querySelectorAll('.form-section').forEach(section => {
+        const header = section.querySelector('.section-header');
+        const content = section.querySelector('.section-content');
+        content.classList.add('open');
+        header.classList.add('open');
+        header.addEventListener('click', () => {
+            content.classList.toggle('open');
+            header.classList.toggle('open');
+        });
+    });
+
     renderFormLists();
     renderCV();
 </script>
